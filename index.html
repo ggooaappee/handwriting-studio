@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="浏览器本地运行的手写稿生成器，支持真实笔迹随机、纸张样式、高清图片与 PDF 导出。"
+    />
+    <title>落笔 · 手写稿生成器</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="落笔首页">
+          <span class="brand-mark" aria-hidden="true">落</span>
+          <span class="brand-copy">
+            <strong>落笔</strong>
+            <small>Handwriting Studio</small>
+          </span>
+        </a>
+        <div class="top-actions">
+          <button class="button button-ghost" id="reshuffleButton" type="button">
+            <i data-lucide="shuffle"></i>
+            <span>换一种笔迹</span>
+          </button>
+          <button class="button button-secondary" id="exportPngButton" type="button">
+            <i data-lucide="image-down"></i>
+            <span>导出图片</span>
+          </button>
+          <button class="button button-primary" id="exportPdfButton" type="button">
+            <i data-lucide="file-down"></i>
+            <span>导出 PDF</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="control-rail" aria-label="手写设置">
+          <div class="rail-heading">
+            <div>
+              <span class="eyebrow">Writing setup</span>
+              <h1>手写设置</h1>
+            </div>
+            <button
+              class="icon-button mobile-settings-toggle"
+              id="settingsToggle"
+              type="button"
+              aria-label="展开或收起手写设置"
+              aria-expanded="false"
+            >
+              <i data-lucide="sliders-horizontal"></i>
+            </button>
+          </div>
+
+          <div class="controls" id="controlsPanel">
+            <section class="control-group">
+              <label class="field-label" for="fontSelect">字体</label>
+              <select class="select" id="fontSelect">
+                <option value="long-cang">清瘦行书</option>
+                <option value="ma-shan-zheng">自然随笔</option>
+                <option value="zhi-mang-xing">连笔速写</option>
+              </select>
+              <p class="field-hint" id="fontHint">字形偏细，适合笔记与答题</p>
+            </section>
+
+            <section class="control-group">
+              <span class="field-label">墨水</span>
+              <div class="swatches" id="inkSwatches" role="radiogroup" aria-label="墨水颜色">
+                <button
+                  class="swatch is-active"
+                  type="button"
+                  data-ink="black"
+                  role="radio"
+                  aria-checked="true"
+                  aria-label="黑色墨水"
+                >
+                  <span style="--swatch: #171717"></span>
+                  <em>黑</em>
+                </button>
+                <button
+                  class="swatch"
+                  type="button"
+                  data-ink="blue"
+                  role="radio"
+                  aria-checked="false"
+                  aria-label="蓝色墨水"
+                >
+                  <span style="--swatch: #17377a"></span>
+                  <em>蓝</em>
+                </button>
+                <button
+                  class="swatch"
+                  type="button"
+                  data-ink="graphite"
+                  role="radio"
+                  aria-checked="false"
+                  aria-label="铅笔灰"
+                >
+                  <span style="--swatch: #424a49"></span>
+                  <em>灰</em>
+                </button>
+              </div>
+            </section>
+
+            <section class="control-group">
+              <label class="field-label" for="paperSelect">纸张</label>
+              <select class="select" id="paperSelect">
+                <option value="plain">素白纸</option>
+                <option value="ruled">横线纸</option>
+                <option value="grid">方格纸</option>
+                <option value="dot">点阵纸</option>
+              </select>
+            </section>
+
+            <section class="control-group range-group">
+              <div class="range-heading">
+                <label for="fontSizeRange">字号</label>
+                <output id="fontSizeValue" for="fontSizeRange">54</output>
+              </div>
+              <input id="fontSizeRange" type="range" min="38" max="78" value="54" step="1" />
+            </section>
+
+            <section class="control-group range-group">
+              <div class="range-heading">
+                <label for="lineHeightRange">行距</label>
+                <output id="lineHeightValue" for="lineHeightRange">1.65</output>
+              </div>
+              <input
+                id="lineHeightRange"
+                type="range"
+                min="1.35"
+                max="2.1"
+                value="1.65"
+                step="0.05"
+              />
+            </section>
+
+            <section class="control-group range-group">
+              <div class="range-heading">
+                <label for="marginRange">页边距</label>
+                <output id="marginValue" for="marginRange">150</output>
+              </div>
+              <input id="marginRange" type="range" min="90" max="220" value="150" step="4" />
+            </section>
+
+            <section class="control-group range-group">
+              <div class="range-heading">
+                <label for="messinessRange">文字凌乱度</label>
+                <output id="messinessValue" for="messinessRange">12%</output>
+              </div>
+              <input
+                id="messinessRange"
+                type="range"
+                min="0"
+                max="40"
+                value="12"
+                step="1"
+              />
+            </section>
+
+            <section class="control-group range-group">
+              <div class="range-heading">
+                <label for="tremorRange">笔画随机度</label>
+                <output id="tremorValue" for="tremorRange">8%</output>
+              </div>
+              <input id="tremorRange" type="range" min="0" max="30" value="8" step="1" />
+            </section>
+
+            <section class="control-group range-group">
+              <div class="range-heading">
+                <label for="mistakesRange">轻微勾画</label>
+                <output id="mistakesValue" for="mistakesRange">1.5%</output>
+              </div>
+              <input
+                id="mistakesRange"
+                type="range"
+                min="0"
+                max="8"
+                value="1.5"
+                step="0.5"
+              />
+            </section>
+
+            <section class="control-group">
+              <span class="field-label">对齐</span>
+              <div class="segmented" id="alignControl" role="radiogroup" aria-label="文字对齐">
+                <button
+                  class="segment is-active"
+                  type="button"
+                  data-align="left"
+                  role="radio"
+                  aria-checked="true"
+                  aria-label="左对齐"
+                >
+                  <i data-lucide="align-left"></i>
+                </button>
+                <button
+                  class="segment"
+                  type="button"
+                  data-align="center"
+                  role="radio"
+                  aria-checked="false"
+                  aria-label="居中"
+                >
+                  <i data-lucide="align-center"></i>
+                </button>
+                <button
+                  class="segment"
+                  type="button"
+                  data-align="right"
+                  role="radio"
+                  aria-checked="false"
+                  aria-label="右对齐"
+                >
+                  <i data-lucide="align-right"></i>
+                </button>
+              </div>
+            </section>
+          </div>
+        </aside>
+
+        <section class="editor-panel" aria-label="文稿内容">
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">Manuscript</span>
+              <h2>文稿</h2>
+            </div>
+            <label class="button button-small button-ghost file-button">
+              <i data-lucide="file-up"></i>
+              <span>导入</span>
+              <input id="fileInput" type="file" accept=".txt,.md,.docx" hidden />
+            </label>
+          </div>
+          <textarea
+            id="textInput"
+            spellcheck="false"
+            aria-label="输入需要转换的文字"
+            placeholder="在这里输入需要生成手写稿的内容"
+          ></textarea>
+          <div class="editor-footer">
+            <span id="charCount">0 字</span>
+            <span>支持中文、英文和常用标点</span>
+          </div>
+        </section>
+
+        <section class="preview-panel" aria-label="手写稿预览">
+          <div class="preview-toolbar">
+            <div class="preview-meta">
+              <span><i data-lucide="scan-line"></i> A4 · 300 DPI</span>
+              <span id="renderStatus" class="status-dot">实时预览</span>
+            </div>
+            <div class="page-nav" id="pageNav">
+              <button class="icon-button" id="prevPageButton" type="button" aria-label="上一页">
+                <i data-lucide="chevron-left"></i>
+              </button>
+              <span id="pageIndicator">1 / 1</span>
+              <button class="icon-button" id="nextPageButton" type="button" aria-label="下一页">
+                <i data-lucide="chevron-right"></i>
+              </button>
+            </div>
+          </div>
+          <div class="canvas-stage" id="canvasStage">
+            <div class="preview-loading" id="previewLoading">正在铺纸落笔…</div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
