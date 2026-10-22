@@ -19,7 +19,7 @@ export const FONT_OPTIONS: FontOption[] = [
     label: "清瘦行书",
     description: "字形偏细，适合笔记与答题",
     family: "Long Cang",
-    file: "fonts/LongCang-Regular.ttf",
+    file: "fonts/LongCang-Regular.woff2",
     weight: 400,
   },
   {
@@ -27,7 +27,7 @@ export const FONT_OPTIONS: FontOption[] = [
     label: "自然随笔",
     description: "笔锋更明显，适合摘抄与书信",
     family: "Ma Shan Zheng",
-    file: "fonts/MaShanZheng-Regular.ttf",
+    file: "fonts/MaShanZheng-Regular.woff2",
     weight: 400,
   },
   {
@@ -35,7 +35,7 @@ export const FONT_OPTIONS: FontOption[] = [
     label: "连笔速写",
     description: "连接感更强，适合快速手记",
     family: "Zhi Mang Xing",
-    file: "fonts/ZhiMangXing-Regular.ttf",
+    file: "fonts/ZhiMangXing-Regular.woff2",
     weight: 400,
   },
 ];
@@ -106,7 +106,7 @@ export async function loadHandwritingFonts(baseUrl: string): Promise<void> {
     FONT_OPTIONS.map(async (font) => {
       const face = new FontFace(
         font.family,
-        `url(${baseUrl}${font.file}) format("truetype")`,
+        `url(${baseUrl}${font.file}) format("woff2")`,
         { weight: String(font.weight), style: "normal" },
       );
       await face.load();
